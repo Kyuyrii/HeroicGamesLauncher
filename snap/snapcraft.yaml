@@ -34,10 +34,9 @@ apps:
     desktop: usr/share/applications/heroic.desktop
     common-id: com.heroicgameslauncher.hgl
     environment:
+      UMU_FOLDERS_PATH: $SNAP_REAL_HOME/App/UMU
       HOME: $SNAP_USER_COMMON
       PATH: $SNAP/usr/games:$PATH
-      LD_LIBRARY_PATH: $SNAP/usr/lib/i386-linux-gnu:$SNAP/usr/lib/i386-linux-gnu/pulseaudio:$LD_LIBRARY_PATH
-      WINEDLLOVERRIDES: "lsteamclient=d"
     extensions: [gnome]
     plugs:
       - audio-playback
@@ -60,25 +59,6 @@ plugs:
 layout:
   /usr/lib/x86_64-linux-gnu/mangohud:
     symlink: $SNAP/usr/lib/x86_64-linux-gnu/mangohud
-
-lint:
-  # Snapcraft's `ldd` lint can't handle 32-bit things,
-  # So just make it quiet and also make builds a surprising amount faster
-  ignore:
-    - library:
-        - lib/i386-linux-gnu/**
-        - usr/lib/i386-linux-gnu/**
-        - lib32/**
-        - usr/lib32/**
-        - opt/wine-stable/lib/wine/i386-unix/**
-
-package-repositories:
-  - type: apt
-    url: https://dl.winehq.org/wine-builds/ubuntu
-    suites: [noble]
-    components: [main]
-    architectures: [amd64, i386]
-    key-id: D43F640145369C51D786DDEA76F1A20FF987672F
 
 parts:
   heroic-app:
@@ -145,14 +125,6 @@ parts:
       - usr/share/metainfo/io.github.flightlessmango.mangohud.metainfo.xml
       - usr/share/vulkan/implicit_layer.d/MangoHud.x86_64.json
 
-  winehq-stable:
-    plugin: nil
-    stage-packages:
-      - winehq-stable
-    prime:
-      - -opt
-      - -usr/bin/wine*
-
   command-chain:
     plugin: dump
     source: ./snap/command-chain/
@@ -160,7 +132,7 @@ parts:
       desktop-launch-heroic: snap/command-chain/desktop-launch-heroic
 
   cleanup:
-    after: [heroic-app, base-dependencies, gamemode, mangohud, winehq-stable]
+    after: [heroic-app, base-dependencies, gamemode, mangohud]
     plugin: nil
     build-snaps:
       - mesa-2404
