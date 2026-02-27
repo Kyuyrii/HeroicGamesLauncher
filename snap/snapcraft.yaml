@@ -51,6 +51,7 @@ apps:
       - bluez
       - udisks2
       - system-backup
+      - umu-support
 
 plugs:
   shared-memory:
@@ -93,12 +94,9 @@ parts:
     prime:
       - etc/security/limits.d/10-gamemode.conf
       - usr/bin/gamemoded
-      - usr/games/gamemodelist
-      - usr/games/gamemoderun
-      - usr/games/gamemode-simulate-game
-      - usr/lib/*/libgamemode.so*
-      - usr/lib/*/libgamemodeauto.so*
-      - usr/lib/*/libinih.so*
+      - usr/games/gamemode*
+      - usr/lib/*/libgamemode*
+      - usr/lib/*/libinih*
       - usr/lib/systemd/user/gamemoded.service
       - usr/lib/sysusers.d/gamemode.conf
       - usr/libexec/cpucorectl
@@ -117,11 +115,9 @@ parts:
     stage-packages: [mangohud, libspdlog1.12, libfmt9]
     prime:
       - usr/bin/mangohud
-      - usr/lib/x86_64-linux-gnu/mangohud/libMangoHud.so*
-      - usr/lib/x86_64-linux-gnu/mangohud/libMangoHud_opengl.so*
-      - usr/lib/x86_64-linux-gnu/mangohud/libMangoHud_shim.so*
-      - usr/lib/x86_64-linux-gnu/libspdlog.so*
-      - usr/lib/x86_64-linux-gnu/libfmt.so*
+      - usr/lib/x86_64-linux-gnu/mangohud
+      - usr/lib/x86_64-linux-gnu/libspdlog*
+      - usr/lib/x86_64-linux-gnu/libfmt*
       - usr/share/metainfo/io.github.flightlessmango.mangohud.metainfo.xml
       - usr/share/vulkan/implicit_layer.d/MangoHud.x86_64.json
 
@@ -130,21 +126,3 @@ parts:
     source: ./snap/command-chain/
     organize:
       desktop-launch-heroic: snap/command-chain/desktop-launch-heroic
-
-  cleanup:
-    after: [heroic-app, base-dependencies, gamemode, mangohud]
-    plugin: nil
-    build-snaps:
-      - mesa-2404
-      - gnome-46-2404
-    override-prime: |
-      set -eux
-      cd /snap/mesa-2404/current/usr/lib
-      find . -type f,l -exec rm -f $CRAFT_PRIME/usr/lib/{} \;
-      cd /snap/mesa-2404/current/usr/share
-      find . -type f,l -exec rm -f $CRAFT_PRIME/usr/share/{} \;
-
-      cd /snap/gnome-46-2404/current/usr/lib
-      find . -type f,l -exec rm -f $CRAFT_PRIME/usr/lib/{} \;
-      cd /snap/gnome-46-2404/current/usr/share
-      find . -type f,l -exec rm -f $CRAFT_PRIME/usr/share/{} \;
